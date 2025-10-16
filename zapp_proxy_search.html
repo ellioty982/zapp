@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zapp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: #020204;
+            color: #e8e8e8;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .space-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(ellipse at bottom, #0d1117 0%, #020204 100%);
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .comet {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8);
+            animation: comet-fall linear infinite;
+        }
+
+        @keyframes comet-fall {
+            0% {
+                transform: translate(0, 0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(300px, 300px);
+                opacity: 0;
+            }
+        }
+
+        .header, .main-content, .footer {
+            position: relative;
+            z-index: 10;
+        }
+
+        .header {
+            padding: 20px 30px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 100px;
+        }
+
+        .logo {
+            font-size: 90px;
+            font-weight: 400;
+            letter-spacing: -2px;
+            margin-bottom: 30px;
+            user-select: none;
+            display: flex;
+            gap: 2px;
+            filter: drop-shadow(0 4px 20px rgba(157, 78, 221, 0.6));
+        }
+
+        .logo span {
+            animation: colorFlow 6s ease-in-out infinite;
+        }
+
+        .logo .z { 
+            animation-delay: 0s;
+        }
+        
+        .logo .a1 { 
+            animation-delay: 1.5s;
+        }
+        
+        .logo .p1 { 
+            animation-delay: 3s;
+        }
+        
+        .logo .p2 { 
+            animation-delay: 4.5s;
+        }
+
+        @keyframes colorFlow {
+            0% {
+                color: #9d4edd;
+                text-shadow: 0 0 10px #9d4edd;
+            }
+            25% {
+                color: #c77dff;
+                text-shadow: 0 0 10px #c77dff;
+            }
+            50% {
+                color: #e0aaff;
+                text-shadow: 0 0 10px #e0aaff;
+            }
+            75% {
+                color: #7b2cbf;
+                text-shadow: 0 0 10px #7b2cbf;
+            }
+            100% {
+                color: #9d4edd;
+                text-shadow: 0 0 10px #9d4edd;
+            }
+        }
+
+        .search-container {
+            width: 100%;
+            max-width: 584px;
+            padding: 0 20px;
+            filter: drop-shadow(0 8px 24px rgba(157, 78, 221, 0.4));
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 46px;
+            border: 1px solid #3c3c3c;
+            border-radius: 24px;
+            padding: 0 14px;
+            transition: all 0.2s;
+            background: rgba(42, 42, 42, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .search-box:hover {
+            box-shadow: 0 1px 6px rgba(157, 78, 221, 0.5), 0 0 20px rgba(157, 78, 221, 0.2);
+            border-color: #9d4edd;
+            background: rgba(42, 42, 42, 0.98);
+        }
+
+        .search-box:focus-within {
+            box-shadow: 0 1px 6px rgba(157, 78, 221, 0.5), 0 0 20px rgba(157, 78, 221, 0.2);
+            border-color: #9d4edd;
+            background: rgba(42, 42, 42, 0.98);
+        }
+
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            opacity: 0.6;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            color: #e8e8e8;
+            background: transparent;
+        }
+
+        .search-input::placeholder {
+            color: #8e8e8e;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #9d4edd 0%, #c77dff 50%, #7b2cbf 100%);
+            background-size: 200% 200%;
+            border: none;
+            border-radius: 24px;
+            color: #ffffff;
+            font-size: 14px;
+            padding: 11px 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            outline: none;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(157, 78, 221, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .search-btn:hover {
+            box-shadow: 0 6px 20px rgba(157, 78, 221, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .search-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.3) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .search-btn:hover::before {
+            opacity: 1;
+        }
+
+        .footer {
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #3c3c3c;
+            padding: 15px 30px;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="space-background"></div>
+    <canvas class="stars" id="starsCanvas"></canvas>
+    
+    <div class="header"></div>
+
+    <div class="main-content" id="mainContent">
+        <div class="logo">
+            <span class="z">Z</span><span class="a1">a</span><span class="p1">p</span><span class="p2">p</span>
+        </div>
+
+        <div class="search-container">
+            <div class="search-box">
+                <svg class="search-icon" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path fill="#8e8e8e" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+                </svg>
+                <input type="text" class="search-input" id="searchInput" autocomplete="off" placeholder="Enter a URL...">
+            </div>
+
+            <div class="button-container">
+                <button class="search-btn" id="searchBtn">Go to URL</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer"></div>
+
+    <!-- Hidden iframe for proxy redirects -->
+    <iframe id="proxyRedirect" style="display:none;"></iframe>
+
+    <script>
+        // Space background animation
+        const canvas = document.getElementById('starsCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        resizeCanvas();
+
+        const stars = [];
+        const comets = [];
+
+        function createStars() {
+            stars.length = 0;
+            for (let i = 0; i < 400; i++) {
+                const size = Math.random();
+                const baseOpacity = Math.random() * 0.4 + 0.6;
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: size < 0.7 ? Math.random() * 0.8 + 0.3 : Math.random() * 1.8 + 0.8,
+                    opacity: baseOpacity,
+                    baseOpacity: baseOpacity,
+                    twinkleSpeed: Math.random() * 0.003 + 0.001,
+                    brightness: size < 0.7 ? 0.6 : 1
+                });
+            }
+        }
+        
+        createStars();
+
+        function createComet() {
+            const numComets = Math.floor(Math.random() * 3) + 2;
+            
+            for (let i = 0; i < numComets; i++) {
+                const startX = Math.random() * canvas.width * 0.4 - 100;
+                const startY = Math.random() * canvas.height * 0.4 - 100;
+                
+                comets.push({
+                    x: startX,
+                    y: startY,
+                    length: Math.random() * 120 + 80,
+                    speed: Math.random() * 0.9 + 0.5,
+                    opacity: 1,
+                    angle: Math.PI / 4
+                });
+            }
+        }
+
+        setInterval(createComet, 5000);
+        createComet();
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            stars.forEach(star => {
+                star.opacity += star.twinkleSpeed;
+                if (star.opacity >= star.baseOpacity + 0.2 || star.opacity <= star.baseOpacity - 0.2) {
+                    star.twinkleSpeed = -star.twinkleSpeed;
+                }
+
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${255 * star.brightness}, ${255 * star.brightness}, ${255 * star.brightness}, ${star.opacity})`;
+                ctx.shadowBlur = star.radius > 1 ? 4 : 0;
+                ctx.shadowColor = 'white';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            });
+
+            comets.forEach((comet, index) => {
+                const dx = Math.cos(comet.angle) * comet.length;
+                const dy = Math.sin(comet.angle) * comet.length;
+                
+                ctx.beginPath();
+                ctx.moveTo(comet.x, comet.y);
+                ctx.lineTo(comet.x - dx, comet.y - dy);
+                
+                const gradient = ctx.createLinearGradient(
+                    comet.x, comet.y,
+                    comet.x - dx, comet.y - dy
+                );
+                gradient.addColorStop(0, `rgba(200, 220, 255, ${comet.opacity * 0.9})`);
+                gradient.addColorStop(0.5, `rgba(180, 200, 255, ${comet.opacity * 0.5})`);
+                gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                
+                ctx.strokeStyle = gradient;
+                ctx.lineWidth = 2.5;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(comet.x, comet.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${comet.opacity})`;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = 'rgba(200, 220, 255, 0.8)';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                comet.x += Math.cos(comet.angle) * comet.speed;
+                comet.y += Math.sin(comet.angle) * comet.speed;
+                comet.opacity -= 0.0008;
+
+                if (comet.opacity <= 0 || comet.x > canvas.width + 200 || comet.y > canvas.height + 200) {
+                    comets.splice(index, 1);
+                }
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            createStars();
+        });
+
+        const buttons = document.querySelectorAll('.search-btn');
+        buttons.forEach(button => {
+            button.addEventListener('mousemove', (e) => {
+                const rect = button.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                button.style.setProperty('--mouse-x', x + '%');
+                button.style.setProperty('--mouse-y', y + '%');
+            });
+        });
+
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const proxyRedirect = document.getElementById('proxyRedirect');
+        const proxyUrl = 'https://zappai.ellioty982.workers.dev/?url='
+        
+        console.log('Proxy URL:', proxyUrl);
+
+        function goToUrl(url) {
+            if (!url.trim()) return;
+
+            let targetUrl = url.trim();
+            
+            // Add https:// if no protocol is specified
+            if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
+                targetUrl = 'https://' + targetUrl;
+            }
+
+            // Open proxied URL in new tab
+            const proxiedUrl = proxyUrl + encodeURIComponent(targetUrl);
+            console.log('Opening:', proxiedUrl);
+            window.open(proxiedUrl, '_blank');
+        }
+
+        searchBtn.addEventListener('click', () => {
+            goToUrl(searchInput.value);
+        });
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                goToUrl(searchInput.value);
+            }
+        });
+
+        searchInput.focus();
+    </script>
+</body>
+</html>
